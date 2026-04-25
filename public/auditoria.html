@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auditoria TRCT</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Auditoria do TRCT</h1>
+      <p>Importe um PDF ou imagem, revise os campos e compare com o cálculo do sistema.</p>
+    </div>
+    <nav class="nav-wrap">
+      <a class="nav-link" href="/">Portal</a>
+      <a class="nav-link" href="/rescisao">Cálculo</a>
+      <a class="nav-link active" href="/auditoria">Auditoria TRCT</a>
+      <button class="nav-link nav-button" id="logoutBtn" type="button">Sair</button>
+    </nav>
+  </header>
+
+  <main class="page two-cols">
+    <section class="card form-card">
+      <h2>1. Enviar TRCT</h2>
+      <form id="uploadForm" class="stack">
+        <input id="arquivoTRCT" name="arquivo" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp" required>
+        <button class="btn primary" type="submit">Importar documento</button>
+      </form>
+
+      <div class="report-note">
+        O último cálculo salvo na tela principal é mantido no navegador. Após comparar, você pode gerar um PDF visual de conferência inspirado no TRCT.
+      </div>
+
+      <h2>2. Campos extraídos</h2>
+      <div id="uploadStatus" class="muted">Nenhum arquivo importado.</div>
+      <div id="camposTRCT" class="form-grid mini hidden"></div>
+
+      <h2>3. Comparar com cálculo salvo</h2>
+      <div class="inline-actions">
+        <button id="compararBtn" class="btn primary" type="button">Comparar agora</button>
+        <button id="gerarPdfBtn" class="btn secondary" type="button">Gerar relatório PDF</button>
+        <button id="limparAuditoriaBtn" class="btn" type="button">Limpar auditoria</button>
+      </div>
+      <p class="muted">A comparação usa o último cálculo salvo no navegador na tela principal.</p>
+    </section>
+
+    <section class="card result-card">
+      <h2>Resultado da auditoria</h2>
+      <div id="auditoriaVazia" class="muted">Importe um TRCT e clique em comparar.</div>
+      <div id="auditoriaBox" class="hidden">
+        <div class="summary-grid" id="auditoriaResumo"></div>
+        <div id="auditoriaTabela"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/state.js"></script>
+  <script src="/js/upload.js"></script>
+  <script src="/js/common-auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/module.css" />
+</head>
+<body>
+  <div class="module-page">
+    <div class="module-top">
+      <div>
+        <span class="tag">Simulador interativo</span>
+        <h1>Comparador CLT x PJ</h1>
+        <p>Versão mais compacta e responsiva, aproveitando melhor a largura e a altura da janela.</p>
+      </div>
+      <div class="module-top-actions">
+        <button>Usar valores do print</button>
+        <button>Limpar simulação</button>
+      </div>
+    </div>
+
+    <section class="summary-grid three">
+      <article class="glass-card highlight">
+        <span>CLT equivalente mensal</span>
+        <strong>R$ 11.749,12</strong>
+        <small>Inclui líquido + benefícios - transporte</small>
+      </article>
+      <article class="glass-card">
+        <span>PJ líquido estimado</span>
+        <strong>R$ 22.567,26</strong>
+        <small>Receita - impostos - encargos</small>
+      </article>
+      <article class="glass-card soft">
+        <span>Diferença mensal</span>
+        <strong>R$ 10.818,14</strong>
+        <small>PJ está na frente na simulação atual</small>
+      </article>
+    </section>
+
+    <section class="content-grid">
+      <article class="glass-card form-card">
+        <div class="card-head">
+          <h2>Entradas</h2>
+          <span class="live">Ao vivo</span>
+        </div>
+        <div class="tabs">
+          <span class="tab active">Geral</span>
+          <span class="tab">Benefícios</span>
+          <span class="tab">Custos</span>
+        </div>
+        <div class="form-grid">
+          <label>
+            <span>Receita PJ mensal</span>
+            <input type="text" value="27000" />
+          </label>
+          <label>
+            <span>Salário bruto CLT</span>
+            <input type="text" value="11000" />
+          </label>
+          <label>
+            <span>Vale refeição</span>
+            <input type="text" value="900" />
+          </label>
+          <label>
+            <span>Plano de saúde</span>
+            <input type="text" value="650" />
+          </label>
+        </div>
+      </article>
+
+      <article class="glass-card chart-card">
+        <h2>Comparação visual</h2>
+        <p>Veja rapidamente qual opção vence.</p>
+        <div class="bar-group">
+          <div class="bar-line">
+            <span>CLT</span>
+            <div class="bar"><i style="width:52%"></i></div>
+            <strong>R$ 11.749,12</strong>
+          </div>
+          <div class="bar-line">
+            <span>PJ</span>
+            <div class="bar"><i style="width:100%"></i></div>
+            <strong>R$ 22.567,26</strong>
+          </div>
+        </div>
+        <div class="insight-box">
+          Visualmente o modelo PJ está mais vantajoso nesta simulação.
+        </div>
+      </article>
+
+      <article class="glass-card radar-card">
+        <h2>Radar financeiro</h2>
+        <p>Distribuição simplificada dos ganhos e descontos.</p>
+        <div class="mini-grid">
+          <div class="mini-box"><span>Líquido CLT</span><strong>R$ 10.249,52</strong></div>
+          <div class="mini-box"><span>Benefícios</span><strong>R$ 1.939,60</strong></div>
+          <div class="mini-box"><span>Encargos PJ</span><strong>R$ 4.432,74</strong></div>
+          <div class="mini-box"><span>Pró-labore</span><strong>R$ 8.475,55</strong></div>
+        </div>
+      </article>
+    </section>
+  </div>
+</body>
+</html>
