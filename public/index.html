@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuditaAerto | Login</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    #app-shell { display:none; }
+    .auth-screen { min-height: 100vh; display:flex; align-items:center; justify-content:center; padding:clamp(14px, 2vw, 24px); }
+    .auth-screen .card { width:min(520px, 100%); }
+    .app-shell { min-height:100vh; width:100%; max-width:1680px; margin:0 auto; padding:clamp(8px, 1.2vw, 18px); }
+    body.portal-expanded .app-shell { max-width:none; padding:8px; }
+    body.portal-expanded .module-shell-card, body.portal-expanded #menu-panel { border-radius:18px; }
+    .app-shell.hidden-force { display:none !important; }
+    .menu-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); gap:18px; margin-top:18px; }
+    .menu-card { text-align:left; padding:22px; min-height:168px; display:flex; flex-direction:column; justify-content:space-between; align-items:flex-start; }
+    .menu-card h3 { margin:0 0 8px; }
+    .menu-card p { margin:0; color:var(--muted); }
+    .shell-head { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:18px; }
+    .shell-frame-wrap { margin-top:18px; }
+    .shell-frame { width:100%; min-height:82vh; border:1px solid var(--line); border-radius:20px; background:#07101b; }
+    .inline-actions, .shell-actions { display:flex; gap:10px; flex-wrap:wrap; }
+    .status-box { min-height: 20px; }
+    .hidden-panel { display:none !important; }
+    .module-shell-card { padding: 10px; }
+    .module-frame { min-height: calc(100vh - 108px); height: calc(100vh - 108px); border-radius: 16px; }
+    body.portal-expanded .module-frame { min-height: calc(100vh - 86px); height: calc(100vh - 86px); }
+    .modal-shell { position: fixed; inset: 0; z-index: 40; display:flex; align-items:center; justify-content:center; padding: clamp(6px, 1vw, 14px); }
+    .modal-backdrop { position:absolute; inset:0; background: rgba(3,8,18,.82); backdrop-filter: blur(4px); }
+    .modal-card { position:relative; width:calc(100vw - 16px); height:calc(100vh - 16px); border:1px solid var(--line); border-radius:20px; background: linear-gradient(180deg, var(--panel), #0f162b); box-shadow: var(--shadow); padding: 10px; display:grid; grid-template-rows:auto minmax(0,1fr); gap:10px; overflow:hidden; }
+    .external-frame { min-height: 0; height: 100%; width: 100%; }
+    .compact-head { margin-bottom: 0; align-items: center; }
+    .compact-head h2 { margin: 0 0 4px; }
+    .compact-head .muted { margin: 0; }
+    .compact-head .inline-actions, .compact-head .shell-actions { align-items: center; justify-content:flex-end; }
+    .shell-actions .btn, .inline-actions .btn { width:auto; }
+    .grow-panel { width:100%; }
+    @media (max-width: 1100px) {
+      .shell-head { align-items:flex-start; }
+      .menu-grid { grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); }
+      .module-frame { min-height: calc(100vh - 136px); height: calc(100vh - 136px); }
+    }
+    @media (max-width: 900px) {
+      .menu-grid { grid-template-columns: 1fr; }
+      .module-frame { min-height: calc(100vh - 170px); height: calc(100vh - 170px); }
+      .compact-head { display:grid; grid-template-columns: 1fr; gap:10px; }
+      .compact-head .inline-actions { width:100%; justify-content:stretch; }
+      .compact-head .inline-actions .btn { flex:1 1 0; min-width:0; }
+      .shell-head { flex-direction:column; align-items:stretch; }
+      .shell-head .inline-actions .btn, .shell-head .shell-actions .btn { flex:1 1 0; min-width:0; }
+    }
+    @media (max-width: 640px) {
+      .auth-screen, .app-shell { padding:8px; }
+      .menu-card { min-height: 130px; padding:16px; }
+      .modal-card { width:calc(100vw - 8px); height:calc(100vh - 8px); padding:8px; gap:8px; border-radius:16px; }
+      .shell-frame { border-radius:16px; }
+      .module-frame { min-height: calc(100vh - 186px); height: calc(100vh - 186px); }
+    }
+  </style>
+</head>
+<body>
+  <main id="login-shell" class="auth-screen">
+    <section class="card auth-card login-clean-card">
+      <div class="login-clean-header">
+        <p class="eyebrow">AuditaAerto</p>
+        <h1>Entrar no sistema</h1>
+        <p class="muted">Informe seu usuário e senha para acessar os sistemas.</p>
+      </div>
+
+      <form id="loginForm" class="stack auth-form">
+        <label>
+          Usuário
+          <input name="username" type="text" placeholder="Seu usuário" autocomplete="username" required>
+        </label>
+        <label>
+          Senha
+          <input name="password" type="password" placeholder="Sua senha" autocomplete="current-password" required>
+        </label>
+        <button class="btn primary" type="submit">Entrar</button>
+      </form>
+      <div id="loginStatus" class="muted small-note status-box"></div>
+    </section>
+  </main>
+
+  <main id="app-shell" class="app-shell hidden-force" aria-hidden="true">
+    <section id="menu-panel" class="card">
+      <div class="shell-head">
+        <div>
+          <p class="eyebrow">Menu de Sistemas</p>
+          <h2 id="sessionUser">Usuário</h2>
+          <p class="muted" id="sessionRole">Selecione o sistema desejado.</p>
+        </div>
+        <div class="shell-actions">
+          <button class="btn secondary" id="toggleViewportBtn" type="button">Usar tela toda</button>
+          <button class="btn secondary" id="logoutBtn" type="button">Sair</button>
+        </div>
+      </div>
+
+      <div class="menu-grid">
+        <button class="btn menu-card" id="openRescisaoBtn" type="button">
+          <div>
+            <h3>Rescisão</h3>
+            <p>Sistema interno de cálculo rescisório dentro do projeto.</p>
+          </div>
+          <strong>Abrir módulo →</strong>
+        </button>
+
+        <button class="btn menu-card" id="openPjBtn" type="button">
+          <div>
+            <h3>Cálculo PJ</h3>
+            <p>Acesso ao outro sistema sem expor o endereço no menu.</p>
+          </div>
+          <strong>Abrir módulo →</strong>
+        </button>
+      </div>
+
+      <section id="adminPanel" class="card hidden-panel" style="margin-top:18px;">
+        <div class="shell-head">
+          <div>
+            <p class="eyebrow">Administrador</p>
+            <h3>Usuários temporários</h3>
+            <p class="muted">Crie usuários temporários com validade de 1 dia.</p>
+          </div>
+          <button class="btn primary" id="createTempUserBtn" type="button">Gerar usuário temporário</button>
+        </div>
+        <div id="tempUserStatus" class="muted small-note status-box">Nenhum usuário gerado nesta sessão.</div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Usuário</th>
+                <th>Perfil</th>
+                <th>Criado por</th>
+                <th>Expira em</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <section id="frame-panel" class="hidden-panel shell-frame-wrap">
+      <div class="card module-shell-card">
+        <div class="shell-head">
+          <div>
+            <p class="eyebrow">Sistema Interno</p>
+            <h2 id="frameTitle">Rescisão</h2>
+            <p class="muted">O módulo é aberto abaixo, dentro do portal.</p>
+          </div>
+          <div class="inline-actions">
+            <button class="btn secondary" id="toggleFrameBtn" type="button">Expandir área</button>
+            <button class="btn secondary" id="backToMenuBtn" type="button">Voltar ao menu</button>
+            <button class="btn" id="logoutBtnInner" type="button">Sair</button>
+          </div>
+        </div>
+        <iframe id="systemFrame" class="shell-frame module-frame" title="Sistema Interno" src="about:blank"></iframe>
+      </div>
+    </section>
+
+    <div id="externalModal" class="modal-shell hidden-panel" aria-hidden="true">
+      <div class="modal-backdrop" id="externalBackdrop"></div>
+      <div class="modal-card">
+        <div class="shell-head compact-head">
+          <div>
+            <p class="eyebrow">Cálculo PJ</p>
+            <h2>Sistema externo</h2>
+            <p class="muted">Abertura dentro do portal, sem exibir o endereço no menu.</p>
+          </div>
+          <div class="inline-actions">
+            <button class="btn secondary" id="toggleExternalBtn" type="button">Expandir área</button>
+            <button class="btn" id="closeExternalBtn" type="button">Fechar</button>
+          </div>
+        </div>
+        <iframe id="externalFrame" class="shell-frame external-frame" title="Sistema externo" src="about:blank"></iframe>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/spa-shell.js"></script>
+</body>
+</html>

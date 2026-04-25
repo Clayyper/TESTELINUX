@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rescisão CLT</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Calculadora de Rescisão</h1>
+      <p>Demissão sem justa causa com ajustes manuais e auditoria de TRCT.</p>
+    </div>
+    <nav class="nav-wrap">
+      <a class="nav-link" href="/">Portal</a>
+      <a class="nav-link active" href="/rescisao">Cálculo</a>
+      <a class="nav-link" href="/auditoria">Auditoria TRCT</a>
+      <button class="nav-link nav-button" id="logoutBtn" type="button">Sair</button>
+    </nav>
+  </header>
+
+  <main class="page">
+    <div class="tabs">
+      <button class="tab-btn active" type="button" data-tab="tab-calculo">1. Cálculo</button>
+      <button class="tab-btn" type="button" data-tab="tab-resultado">2. Resultado</button>
+      <a class="nav-link" href="/auditoria">3. Auditoria / PDF</a>
+    </div>
+    <p class="state-note">Os dados do formulário e o último cálculo ficam salvos localmente no navegador nesta versão.</p>
+    <div id="tab-calculo" class="tab-panel">
+      <div class="two-cols">
+    <section class="card form-card">
+      <h2>Entradas do cálculo</h2>
+      <form id="calculoForm" class="form-grid">
+        <label>
+          Nome do funcionário
+          <input name="nome" type="text" placeholder="Ex.: João da Silva">
+        </label>
+        <label>
+          Salário base
+          <input name="salarioBase" type="number" step="0.01" value="3500">
+        </label>
+        <label>
+          Data de admissão
+          <div class="date-field">
+            <input name="dataAdmissao" type="text" inputmode="numeric" placeholder="dd/mm/aaaa ou aaaa-mm-dd" value="10/05/2018" autocomplete="off">
+            <button type="button" class="date-picker-btn" data-picker-for="dataAdmissao" aria-label="Abrir calendário">📅</button>
+            <input type="date" class="date-picker-native" data-native-for="dataAdmissao" value="2018-05-10" tabindex="-1" aria-hidden="true">
+          </div>
+        </label>
+        <label>
+          Data de demissão
+          <div class="date-field">
+            <input name="dataDemissao" type="text" inputmode="numeric" placeholder="dd/mm/aaaa ou aaaa-mm-dd" value="16/04/2026" autocomplete="off">
+            <button type="button" class="date-picker-btn" data-picker-for="dataDemissao" aria-label="Abrir calendário">📅</button>
+            <input type="date" class="date-picker-native" data-native-for="dataDemissao" value="2026-04-16" tabindex="-1" aria-hidden="true">
+          </div>
+        </label>
+        <label>
+          Tipo de aviso prévio
+          <select name="avisoPrevioTipo">
+            <option value="indenizado">Indenizado</option>
+            <option value="trabalhado">Trablhado</option>
+            <option value="dispensa">Dispensa do cumprimento</option>
+          </select>
+        </label>
+        <label>
+          Dias de aviso prévio (opcional)
+          <input name="diasAvisoPrevio" type="number" placeholder="Se vazio, calcula automático">
+        </label>
+        <label>
+          Dias trabalhados no mês
+          <input name="diasTrabalhadosMes" type="number" value="16">
+        </label>
+        <label>
+          Dias não pagos
+          <input name="diasNaoPagos" type="number" value="0">
+        </label>
+        <label>
+          Férias vencidas em aberto
+          <input name="feriasVencidasQtd" type="number" value="1">
+        </label>
+        <label class="check-inline">
+          <span>Férias vencidas em dobro</span>
+          <input name="feriasVencidasEmDobro" type="checkbox">
+        </label>
+        <label>
+          Meses de férias proporcionais
+          <input name="mesesFeriasProporcionais" type="number" value="5">
+        </label>
+        <label>
+          Meses de 13º proporcional
+          <input name="mesesDecimoTerceiro" type="number" value="4">
+        </label>
+        <label>
+          Saldo FGTS para multa
+          <input name="saldoFgts" type="number" step="0.01" value="18500">
+        </label>
+        <label>
+          Percentual multa FGTS
+          <input name="percentualMultaFgts" type="number" step="0.01" value="40">
+        </label>
+
+        <label>
+          Média horas extras
+          <input name="mediaHorasExtras" type="number" step="0.01" value="0">
+        </label>
+        <label>
+          Média adicional noturno
+          <input name="mediaAdicionalNoturno" type="number" step="0.01" value="0">
+        </label>
+        <label>
+          Média comissões
+          <input name="mediaComissoes" type="number" step="0.01" value="0">
+        </label>
+        <label>
+          Média periculosidade
+          <input name="mediaPericulosidade" type="number" step="0.01" value="0">
+        </label>
+        <label>
+          Média insalubridade
+          <input name="mediaInsalubridade" type="number" step="0.01" value="0">
+        </label>
+        <label>
+          Outras médias
+          <input name="outrasMedias" type="number" step="0.01" value="0">
+        </label>
+
+        <label>
+          Adiantamento de 13º já pago
+          <input name="adiantamentoDecimoTerceiro" type="number" step="0.01" value="0">
+        </label>
+        <label>
+          Dias indenizados extras
+          <input name="diasIndenizadosExtras" type="number" value="0">
+        </label>
+        <label>
+          Outras verbas a pagar
+          <input name="outrosProventos" type="number" step="0.01" value="0">
+        </label>
+        <label>
+          Outras verbas/descontos manuais
+          <input name="outrosDescontos" type="number" step="0.01" value="0">
+        </label>
+        <label>
+          Indenização manual
+          <input name="valorIndenizacaoManual" type="number" step="0.01" value="0">
+        </label>
+        <label>
+          Desconto manual adicional
+          <input name="descontoManual" type="number" step="0.01" value="0">
+        </label>
+        <label>
+          Vale transporte
+          <input name="descontoValeTransporte" type="number" step="0.01" value="0">
+        </label>
+        <label>
+          Vale alimentação
+          <input name="descontoValeAlimentacao" type="number" step="0.01" value="0">
+        </label>
+        <label>
+          Plano de saúde
+          <input name="descontoPlanoSaude" type="number" step="0.01" value="0">
+        </label>
+        <label>
+          INSS manual (opcional)
+          <input name="descontoInssManual" type="number" step="0.01" placeholder="Deixe vazio para cálculo simplificado">
+        </label>
+        <label>
+          IRRF manual (opcional)
+          <input name="descontoIrrfManual" type="number" step="0.01" placeholder="Deixe vazio para cálculo simplificado">
+        </label>
+
+        <div class="actions full-row">
+          <button type="submit" class="btn primary">Calcular rescisão</button>
+          <button type="button" id="limparBtn" class="btn">Limpar</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card result-card" id="tab-resultado-card">
+      <h2>Resultado</h2>
+      <div id="resultadoVazio" class="muted">Preencha os campos e clique em calcular.</div>
+      <div id="resultadoBox" class="hidden">
+        <div class="inline-actions">
+          <a class="btn secondary" href="/auditoria">Ir para auditoria</a>
+        </div>
+        <div class="summary-grid" id="resumoTotais"></div>
+        <h3>Rubricas</h3>
+        <div id="rubricasTabela"></div>
+        <h3>Memória de cálculo</h3>
+        <ul id="memoriaLista" class="memory-list"></ul>
+        <div class="alert-list" id="avisosLista"></div>
+      </div>
+    </section>
+        </div>
+    </div>
+  </main>
+
+  <script src="/js/state.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/common-auth.js"></script>
+</body>
+</html>

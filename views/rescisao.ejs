@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/module.css" />
+</head>
+<body>
+  <div class="module-page">
+    <div class="module-top">
+      <div>
+        <span class="tag">Sistema interno</span>
+        <h1>Rescisão</h1>
+        <p>Módulo aberto dentro do portal com melhor aproveitamento da tela e leitura mais compacta.</p>
+      </div>
+      <div class="module-top-actions">
+        <button>Voltar ao portal</button>
+        <button>Pegar o TRCT</button>
+      </div>
+    </div>
+
+    <section class="step-row">
+      <span class="step active">1. Cálculo</span>
+      <span class="step">2. Resultado</span>
+      <span class="step">3. Auditoria / PDF</span>
+    </section>
+
+    <section class="content-grid rescisao-layout">
+      <article class="glass-card form-card wide">
+        <h2>Entradas do cálculo</h2>
+        <div class="form-grid two-cols">
+          <label><span>Nome do funcionário</span><input type="text" value="João da Silva" /></label>
+          <label><span>Salário base</span><input type="text" value="3500" /></label>
+          <label><span>Data de admissão</span><input type="date" value="2018-05-10" /></label>
+          <label><span>Data de demissão</span><input type="date" value="2025-04-16" /></label>
+          <label><span>Tipo de aviso prévio</span><select><option>Indenizado</option></select></label>
+          <label><span>Dias de aviso prévio</span><input type="text" value="39" /></label>
+          <label><span>Dias trabalhados no mês</span><input type="text" value="16" /></label>
+          <label><span>Dias não pagos</span><input type="text" value="0" /></label>
+        </div>
+      </article>
+
+      <article class="glass-card result-card">
+        <h2>Resultado</h2>
+        <a href="#">Ir para auditoria</a>
+        <div class="mini-grid top-gap">
+          <div class="mini-box"><span>Bruto</span><strong>R$ 22.994,44</strong></div>
+          <div class="mini-box"><span>Descontos</span><strong>R$ 242,67</strong></div>
+          <div class="mini-box"><span>Líquido</span><strong>R$ 22.751,78</strong></div>
+        </div>
+
+        <div class="rubricas">
+          <div class="rubrica-row"><span>saldoSalario</span><strong>R$ 1.866,67</strong></div>
+          <div class="rubrica-row"><span>avisoPrevioValor</span><strong>R$ 5.950,00</strong></div>
+          <div class="rubrica-row"><span>feriasVencidasPrincipal</span><strong>R$ 3.500,00</strong></div>
+          <div class="rubrica-row"><span>feriasProporcionais</span><strong>R$ 1.166,67</strong></div>
+          <div class="rubrica-row"><span>13oProporcional</span><strong>R$ 1.166,67</strong></div>
+        </div>
+      </article>
+    </section>
+  </div>
+</body>
+</html>

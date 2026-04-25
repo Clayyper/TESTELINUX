@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal de Sistemas | AuditaAerto</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="auth-body">
+  <main class="auth-shell auth-shell-wide">
+    <section class="card auth-card">
+      <div>
+        <p class="eyebrow">AuditaAerto</p>
+        <h1 id="homeTitle">Entrar no portal</h1>
+        <p class="muted" id="homeSubtitle">Faça login para abrir o menu dos sistemas disponíveis.</p>
+      </div>
+
+      <section id="loginSection">
+        <form id="loginForm" class="stack auth-form">
+          <label>
+            Usuário
+            <input name="username" type="text" placeholder="admin" autocomplete="username" required>
+          </label>
+          <label>
+            Senha
+            <input name="password" type="password" placeholder="••••••" autocomplete="current-password" required>
+          </label>
+          <button class="btn primary" type="submit">Entrar</button>
+        </form>
+        <div id="loginStatus" class="muted small-note">Usuário inicial: <strong>admin</strong> · senha: <strong>123456</strong></div>
+      </section>
+
+      <section id="menuSection" class="hidden">
+        <div class="portal-head compact-head">
+          <div>
+            <p class="eyebrow">Menu de Sistemas</p>
+            <h2 id="portalUserName">Carregando...</h2>
+            <p class="muted" id="portalUserRole"></p>
+          </div>
+          <button class="btn" id="logoutBtn" type="button">Sair</button>
+        </div>
+
+        <div id="systemCards" class="portal-grid"></div>
+
+        <section class="card hidden inner-card" id="adminPanel">
+          <div class="panel-title-row">
+            <div>
+              <p class="eyebrow">Administrador</p>
+              <h3>Usuários temporários</h3>
+              <p class="muted">Gere usuários com validade de 1 dia.</p>
+            </div>
+            <button class="btn primary btn-inline" id="gerarTempUserBtn" type="button">Gerar usuário temporário</button>
+          </div>
+          <div id="tempUserStatus" class="muted">Nenhum usuário gerado nesta sessão.</div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Usuário</th>
+                  <th>Perfil</th>
+                  <th>Criado por</th>
+                  <th>Expira em</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </section>
+  </main>
+  <script src="/js/home.js"></script>
+</body>
+</html>
