@@ -43,6 +43,42 @@
         <button id="limparAuditoriaBtn" class="btn" type="button">Limpar auditoria</button>
       </div>
       <p class="muted">A comparação usa o último cálculo salvo no navegador na tela principal.</p>
+
+      <div class="section-divider"></div>
+      <h2>4. Conferência e-CAC / Fontes Pagadoras</h2>
+      <form id="ecacForm" class="stack">
+        <input id="arquivoECAC" name="arquivos" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp" multiple required>
+        <button class="btn secondary" type="submit">Importar informes e-CAC em lote</button>
+      </form>
+      <div class="report-note">
+        Use os PDFs impressos do e-CAC ou imagens do relatório Fontes Pagadoras. Você pode selecionar vários arquivos de uma vez; o sistema soma os valores e mantém a lista de fontes pagadoras.
+      </div>
+      <div id="ecacStatus" class="muted">Nenhum informe e-CAC importado.</div>
+      <div id="ecacResumo" class="summary-grid hidden"></div>
+      <div class="inline-actions">
+        <button id="conferirEcacBtn" class="btn primary" type="button">Conferir e-CAC</button>
+        <button id="limparEcacBtn" class="btn secondary" type="button">Limpar e-CAC</button>
+      </div>
+
+      <div class="section-divider"></div>
+      <h2>5. Conferência FGTS / Caixa</h2>
+      <form id="fgtsForm" class="stack">
+        <input id="arquivoFGTS" name="arquivos" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp" multiple>
+        <button class="btn secondary" type="submit">Importar extrato(s) FGTS</button>
+      </form>
+      <div class="report-note">
+        Use um ou vários PDFs/prints do extrato FGTS ou informe o saldo manualmente. O sistema soma os saldos, preenche o FGTS da primeira tela, recalcula a multa de 40% e já apresenta a divergência.
+      </div>
+      <label>
+        Saldo FGTS manual
+        <input id="saldoFgtsManual" type="text" inputmode="decimal" placeholder="Ex.: 142.136,00">
+      </label>
+      <div class="inline-actions">
+        <button id="conferirFgtsBtn" class="btn primary" type="button">Conferir FGTS</button>
+        <button id="limparFgtsBtn" class="btn secondary" type="button">Limpar FGTS</button>
+      </div>
+      <div id="fgtsStatus" class="muted">Nenhum saldo FGTS informado/importado.</div>
+      <div id="fgtsResumo" class="summary-grid hidden"></div>
     </section>
 
     <section class="card result-card">
@@ -52,6 +88,21 @@
         <div class="summary-grid" id="auditoriaResumo"></div>
         <div id="auditoriaTabela"></div>
       </div>
+
+        <div class="section-divider"></div>
+        <h2>Resultado e-CAC / Receita</h2>
+        <div id="ecacVazia" class="muted">Importe o informe e-CAC para conferir rendimentos declarados.</div>
+        <div id="ecacBox" class="hidden">
+          <div id="ecacFontes"></div>
+          <div id="ecacTabela"></div>
+        </div>
+
+        <div class="section-divider"></div>
+        <h2>Resultado FGTS / Caixa</h2>
+        <div id="fgtsVazia" class="muted">Importe ou informe o saldo FGTS para conferir a multa de 40%.</div>
+        <div id="fgtsBox" class="hidden">
+          <div id="fgtsTabela"></div>
+        </div>
     </section>
   </main>
 

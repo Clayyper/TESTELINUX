@@ -1,4 +1,26 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Auditoria TRCT</title><link rel="stylesheet" href="/css/style.css"><style>body{background:transparent;} .module-page{padding:12px; max-width:none; width:100%; margin:0 auto;} .module-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;} .module-actions .btn{width:auto;} @media(max-width:1100px){.page.two-cols{grid-template-columns:1fr;}}</style></head><body><main class="module-page"><div class="module-actions"><button class="btn secondary" id="backPortalBtn" type="button">Voltar para o portal</button><button class="btn" id="backRescisaoBtn" type="button">Voltar para Rescisão</button><button class="btn secondary" id="logoutInlineBtn" type="button">Sair</button></div><div class="page two-cols" style="padding:0;max-width:none;">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auditoria TRCT</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Auditoria do TRCT</h1>
+      <p>Importe um PDF ou imagem, revise os campos e compare com o cálculo do sistema.</p>
+    </div>
+    <nav class="nav-wrap">
+      <a class="nav-link" href="/">Portal</a>
+      <a class="nav-link" href="/rescisao">Cálculo</a>
+      <a class="nav-link active" href="/auditoria">Auditoria TRCT</a>
+      <button class="nav-link nav-button" id="logoutBtn" type="button">Sair</button>
+    </nav>
+  </header>
+
+  <main class="page two-cols">
     <section class="card form-card">
       <h2>1. Enviar TRCT</h2>
       <form id="uploadForm" class="stack">
@@ -18,7 +40,7 @@
       <div class="inline-actions">
         <button id="compararBtn" class="btn primary" type="button">Comparar agora</button>
         <button id="gerarPdfBtn" class="btn secondary" type="button">Gerar relatório PDF</button>
-        <button id="limparAuditoriaBtn" class="btn secondary" type="button">Limpar auditoria</button>
+        <button id="limparAuditoriaBtn" class="btn" type="button">Limpar auditoria</button>
       </div>
       <p class="muted">A comparação usa o último cálculo salvo no navegador na tela principal.</p>
 
@@ -41,11 +63,11 @@
       <div class="section-divider"></div>
       <h2>5. Conferência FGTS / Caixa</h2>
       <form id="fgtsForm" class="stack">
-        <input id="arquivoFGTS" name="arquivos" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp" multiple>
-        <button class="btn secondary" type="submit">Importar extrato(s) FGTS</button>
+        <input id="arquivoFGTS" name="arquivo" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp">
+        <button class="btn secondary" type="submit">Importar extrato FGTS</button>
       </form>
       <div class="report-note">
-        Use um ou vários PDFs/prints do extrato FGTS ou informe o saldo manualmente. O sistema soma os saldos, preenche o FGTS da primeira tela, recalcula a multa de 40% e já apresenta a divergência.
+        Use PDF/print do extrato FGTS ou informe o saldo manualmente. O sistema calcula a multa de 40% e compara com a multa FGTS do TRCT/sistema.
       </div>
       <label>
         Saldo FGTS manual
@@ -82,4 +104,10 @@
           <div id="fgtsTabela"></div>
         </div>
     </section>
-  </div></main><script src="/js/state.js"></script><script src="/js/upload.js"></script><script>(function(){document.getElementById('backPortalBtn')?.addEventListener('click',()=>parent.postMessage({type:'portal:back'}, window.location.origin));document.getElementById('backRescisaoBtn')?.addEventListener('click',()=>parent.postMessage({type:'portal:open-rescisao'}, window.location.origin));document.getElementById('logoutInlineBtn')?.addEventListener('click',()=>parent.postMessage({type:'portal:logout'}, window.location.origin));})();</script></body></html>
+  </main>
+
+  <script src="/js/state.js"></script>
+  <script src="/js/upload.js"></script>
+  <script src="/js/common-auth.js"></script>
+</body>
+</html>

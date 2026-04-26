@@ -1,0 +1,33 @@
+PATCH FGTS - SOMENTE ARQUIVOS ALTERADOS
+
+Copie estas pastas/arquivos por cima da sua versão estável, mantendo a mesma estrutura.
+
+Arquivos incluídos:
+- public/modules/auditoria-module.html
+- public/auditoria.html
+- public/js/upload.js
+- public/css/style.css
+- src/controllers/fgtsController.js
+- src/routes/fgts.routes.js
+- src/services/normalizadorFGTS.js
+- src/services/relatorioPdfService.js
+- app.js
+- server.js
+
+IMPORTANTE:
+- Não substitui .env
+- Não substitui package.json
+- Não substitui login.js, portal.js ou userStore.js
+
+Depois de copiar:
+1) Pare o servidor com Ctrl+C
+2) Rode: npm start
+3) No navegador: Ctrl+F5
+
+Fluxo de teste:
+1) Faça o cálculo TRCT
+2) Importe e-CAC, se quiser
+3) Informe saldo FGTS manualmente, exemplo: 142136.00
+4) Clique em Conferir FGTS
+5) Gere o PDF
+6) Deve sair folha do FGTS no relatório

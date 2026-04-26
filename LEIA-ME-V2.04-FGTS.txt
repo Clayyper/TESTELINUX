@@ -1,0 +1,27 @@
+V2.04 - Conferência FGTS / Caixa
+
+Incluído:
+- Bloco 5: Conferência FGTS / Caixa na tela Auditoria TRCT.
+- Importação de extrato FGTS em PDF/imagem quando o saldo puder ser lido.
+- Campo manual para informar o saldo FGTS quando o extrato/print não for lido.
+- Cálculo automático da multa esperada: saldo FGTS x 40%.
+- Comparação contra a multa FGTS do TRCT/sistema.
+- Envio dos dados FGTS para o relatório PDF.
+- 4ª folha no relatório: Conferência FGTS / Caixa.
+
+Ordem recomendada de uso:
+1. Fazer o cálculo da rescisão na tela principal.
+2. Importar e comparar o TRCT.
+3. Importar e-CAC, se houver.
+4. Importar FGTS ou informar saldo manualmente.
+5. Clicar em Gerar relatório PDF.
+
+Arquivos principais alterados:
+- public/modules/auditoria-module.html
+- public/auditoria.html
+- public/js/upload.js
+- server.js
+- src/services/relatorioPdfService.js
+- src/services/normalizadorFGTS.js
+- src/controllers/fgtsController.js
+- src/routes/fgts.routes.js

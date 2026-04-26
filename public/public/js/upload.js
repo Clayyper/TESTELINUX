@@ -600,11 +600,6 @@ function parseMoneyBR(value) {
   return Number.isFinite(n) ? Math.round(n * 100) / 100 : null;
 }
 
-function roundMoneyFGTS(value) {
-  const n = Number(value || 0);
-  return Number.isFinite(n) ? Math.round(n * 100) / 100 : 0;
-}
-
 function deepFindNumber(obj, keys) {
   const wanted = keys.map((k) => String(k).toLowerCase());
   const seen = new Set();
@@ -630,72 +625,16 @@ function deepFindNumber(obj, keys) {
 }
 
 function getMultaFgtsSistema(calculo) {
-  return deepFindNumber(calculo, ['multafgts', 'multafgts40', 'multa do fgts', 'multa fgts', 'fgts40']) ?? 0;
+  return deepFindNumber(calculo, ['multafgts', 'multafgts40', 'multa do fgts', 'multa fgts', 'fgts40', 'fgts']) ?? 0;
 }
 
-async function atualizarPrimeiraTelaComFGTS(saldo) {
+function montarConferenciaFGTS(saldo, origem = 'manual', extra = {}) {
   const state = window.AppState?.loadState?.() || {};
-  const formularioAtual = { ...(state.formulario || {}) };
-
-  formularioAtual.saldoFgts = String(roundMoneyFGTS(saldo));
-  formularioAtual.percentualMultaFgts = '40';
-
-  let calculoAtualizado = state.calculo || JSON.parse(localStorage.getItem('ultimoCalculoRescisao') || 'null');
-  let recalculado = false;
-  let erroRecalculo = null;
-
-  // Se já existia cálculo, recalcula automaticamente para a divergência aparecer atualizada.
-  if (calculoAtualizado) {
-    try {
-      const response = await fetch('/api/calculo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formularioAtual)
-      });
-      const data = await parseApiResponse(response);
-      if (!response.ok || data.ok === false) throw new Error(data.error || data.details || 'Falha ao recalcular.');
-      calculoAtualizado = data;
-      localStorage.setItem('ultimoCalculoRescisao', JSON.stringify(data));
-      recalculado = true;
-    } catch (error) {
-      erroRecalculo = error.message || 'erro desconhecido';
-    }
-  }
-
-  window.AppState?.saveState?.({ formulario: formularioAtual, calculo: calculoAtualizado });
-  return { formulario: formularioAtual, calculo: calculoAtualizado, recalculado, erroRecalculo };
-}
-
-function montarLinhasArquivosFGTS(data) {
-  const arquivos = data.arquivos || [];
-  if (!arquivos.length) return '';
-  return `
-    <h3>Arquivos FGTS importados</h3>
-    <div class="table-wrap"><table class="table">
-      <thead><tr><th>Arquivo</th><th>Saldo localizado</th><th>Status</th></tr></thead>
-      <tbody>${arquivos.map((a) => `
-        <tr>
-          <td>${escapeHtml(a.nome || 'arquivo-fgts')}</td>
-          <td>${formatBRL(a.saldo)}</td>
-          <td><span class="badge ${a.ok ? 'ok' : 'warn'}">${a.ok ? 'LIDO' : 'NAO_LIDO'}</span></td>
-        </tr>`).join('')}</tbody>
-    </table></div>`;
-}
-
-async function montarConferenciaFGTS(saldo, origem = 'manual', extra = {}) {
-  const atualizacao = await atualizarPrimeiraTelaComFGTS(saldo);
-  const calculo = atualizacao.calculo || {};
+  const calculo = state.calculo || JSON.parse(localStorage.getItem('ultimoCalculoRescisao') || 'null') || {};
   const multaSistema = getMultaFgtsSistema(calculo);
-  const multaEsperada = saldo === null ? null : roundMoneyFGTS(saldo * 0.4);
-  const diferenca = multaEsperada === null ? null : roundMoneyFGTS(multaSistema - multaEsperada);
+  const multaEsperada = saldo === null ? null : Math.round(saldo * 0.4 * 100) / 100;
+  const diferenca = multaEsperada === null ? null : Math.round((multaSistema - multaEsperada) * 100) / 100;
   const status = diferenca === null ? 'NAO_LIDO' : Math.abs(diferenca) <= 1 ? 'OK' : 'DIVERGENTE';
-
-  const avisos = [];
-  if (atualizacao.recalculado) avisos.push('Primeira tela atualizada: saldo FGTS preenchido e cálculo refeito automaticamente.');
-  else if (atualizacao.calculo) avisos.push('Primeira tela atualizada com o saldo FGTS. O cálculo salvo foi mantido.');
-  else avisos.push('Primeira tela atualizada com o saldo FGTS. Faça o cálculo principal para atualizar todas as verbas.');
-  if (atualizacao.erroRecalculo) avisos.push(`Não foi possível recalcular automaticamente: ${atualizacao.erroRecalculo}`);
-  if (!multaSistema) avisos.push('A multa FGTS do sistema ainda não foi localizada no cálculo salvo.');
 
   return {
     origem,
@@ -705,14 +644,12 @@ async function montarConferenciaFGTS(saldo, origem = 'manual', extra = {}) {
     multaSistema,
     diferenca,
     status,
-    primeiraTelaAtualizada: true,
-    recalculado: atualizacao.recalculado,
     linhas: [
-      { item: 'Saldo FGTS importado/informado', sistema: saldo, fgts: saldo, diferenca: 0, status: saldo === null ? 'NAO_LIDO' : 'OK' },
+      { item: 'Saldo FGTS informado/importado', sistema: null, fgts: saldo, diferenca: null, status: saldo === null ? 'NAO_LIDO' : 'INFORMATIVO' },
       { item: 'Multa 40% esperada sobre saldo FGTS', sistema: multaSistema, fgts: multaEsperada, diferenca, status },
-      { item: 'Multa FGTS atual do TRCT/sistema', sistema: multaSistema, fgts: null, diferenca: null, status: multaSistema ? 'INFORMATIVO' : 'NAO_LIDO' }
+      { item: 'Multa FGTS do TRCT/sistema', sistema: multaSistema, fgts: null, diferenca: null, status: multaSistema ? 'INFORMATIVO' : 'NAO_LIDO' }
     ],
-    avisos
+    avisos: multaSistema ? [] : ['A multa FGTS do sistema não foi localizada no último cálculo salvo. Confira se o cálculo foi feito antes da conferência.']
   };
 }
 
@@ -737,9 +674,7 @@ function renderFGTS(data) {
         <strong>Origem:</strong> ${escapeHtml(data.origem || 'manual')}
         ${data.arquivo?.nome ? `<br><strong>Arquivo:</strong> ${escapeHtml(data.arquivo.nome)}` : ''}
         ${data.encontradoPor ? `<br><strong>Leitura:</strong> ${escapeHtml(data.encontradoPor)}` : ''}
-        ${data.recalculado ? '<br><strong>Primeira tela:</strong> atualizada e cálculo refeito.' : '<br><strong>Primeira tela:</strong> saldo FGTS atualizado.'}
       </div>
-      ${montarLinhasArquivosFGTS(data)}
       <table class="table">
         <thead><tr><th>Item</th><th>Sistema/TRCT</th><th>FGTS/Caixa</th><th>Diferença</th><th>Status</th></tr></thead>
         <tbody>${(data.linhas || []).map((item) => `
@@ -769,41 +704,41 @@ function restoreFgtsState() {
 
 fgtsForm?.addEventListener('submit', async (event) => {
   event.preventDefault();
-  const arquivos = Array.from(arquivoFGTS?.files || []);
-  if (!arquivos.length) {
-    if (fgtsStatus) fgtsStatus.innerHTML = '<div class="status-warn">Selecione um ou mais PDFs/imagens do FGTS, ou informe o saldo manualmente.</div>';
+  const arquivo = arquivoFGTS?.files?.[0];
+  if (!arquivo) {
+    if (fgtsStatus) fgtsStatus.innerHTML = '<div class="status-warn">Selecione um PDF ou imagem do FGTS, ou informe o saldo manualmente.</div>';
     return;
   }
 
-  if (fgtsStatus) fgtsStatus.textContent = `Importando ${arquivos.length} extrato(s) FGTS...`;
+  if (fgtsStatus) fgtsStatus.textContent = 'Importando extrato FGTS...';
   const formData = new FormData();
-  arquivos.forEach((arquivo) => formData.append('arquivos', arquivo));
+  formData.append('arquivo', arquivo);
 
   try {
-    const response = await fetch('/api/fgts/importar-lote', { method: 'POST', body: formData });
+    const response = await fetch('/api/fgts/importar', { method: 'POST', body: formData });
     const data = await parseApiResponse(response);
     if (!response.ok || data.ok === false || data.saldo === null) {
       throw new Error(data.error || data.observacoes?.join(' ') || 'Saldo FGTS não localizado automaticamente.');
     }
 
     fgtsImportado = data;
-    const conferencia = await montarConferenciaFGTS(Number(data.saldo), 'importado', data);
+    const conferencia = montarConferenciaFGTS(Number(data.saldo), 'importado', data);
     if (saldoFgtsManual) saldoFgtsManual.value = String(data.saldo).replace('.', ',');
-    if (fgtsStatus) fgtsStatus.innerHTML = `FGTS importado: <strong>${escapeHtml(data.quantidadeLidos || 0)}</strong> lido(s) de <strong>${escapeHtml(data.quantidadeArquivos || arquivos.length)}</strong> arquivo(s).`;
+    if (fgtsStatus) fgtsStatus.innerHTML = `FGTS importado: <strong>${escapeHtml(data.arquivo?.nome || arquivo.name)}</strong>`;
     renderFGTS(conferencia);
   } catch (error) {
     if (fgtsStatus) fgtsStatus.innerHTML = `<div class="status-warn">Falha ao importar FGTS: ${escapeHtml(error.message || 'erro desconhecido')}<br>Informe o saldo manualmente e clique em Conferir FGTS.</div>`;
   }
 });
 
-conferirFgtsBtn?.addEventListener('click', async () => {
+conferirFgtsBtn?.addEventListener('click', () => {
   const saldo = parseMoneyBR(saldoFgtsManual?.value);
   if (saldo === null) {
     if (fgtsStatus) fgtsStatus.innerHTML = '<div class="status-warn">Informe o saldo FGTS no campo manual ou importe um extrato legível.</div>';
     return;
   }
-  if (fgtsStatus) fgtsStatus.innerHTML = 'Conferência FGTS calculada manualmente. Primeira tela atualizada.';
-  renderFGTS(await montarConferenciaFGTS(saldo, 'manual'));
+  if (fgtsStatus) fgtsStatus.innerHTML = 'Conferência FGTS calculada manualmente.';
+  renderFGTS(montarConferenciaFGTS(saldo, 'manual'));
 });
 
 limparFgtsBtn?.addEventListener('click', () => {
