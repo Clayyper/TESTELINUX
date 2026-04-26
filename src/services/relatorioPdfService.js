@@ -23,13 +23,28 @@ const COLORS = {
   white: '#ffffff'
 };
 
+function cleanText(value) {
+  return String(value ?? '')
+    .normalize('NFC')
+    .replace(/\uFEFF/g, '')
+    .replace(/ÿþ|þÿ/g, '')
+    .replace(/[–—]/g, '-')
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/•/g, '-')
+    .replace(/…/g, '...')
+    .replace(/\u00A0/g, ' ')
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, ' ')
+    .replace(/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function pdfText(value) {
-  const s = String(value ?? '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, ' ');
-  const bytes = Buffer.from('\uFEFF' + s, 'utf16le');
-  for (let i = 2; i < bytes.length; i += 2) {
-    const a = bytes[i]; bytes[i] = bytes[i + 1]; bytes[i + 1] = a;
-  }
-  return `<${bytes.toString('hex').toUpperCase()}>`;
+  // PDF usa Helvetica / WinAnsi. Não gravar string UTF-16 com BOM,
+  // porque alguns leitores mostram FE FF como "ÿþ".
+  const s = cleanText(value);
+  return `<${Buffer.from(s, 'latin1').toString('hex').toUpperCase()}>`;
 }
 
 function brl(value) {
