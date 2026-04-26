@@ -6,6 +6,8 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const { URL } = require('url');
+const { calcularRescisao } = require('./src/services/calculoRescisao');
+const { gerarMemoriaCalculo } = require('./src/services/memoriaCalculo');
 
 loadDotEnv();
 
@@ -232,6 +234,19 @@ async function handler(req, res) {
       const user = { username, password, role: 'auditoria', systems: ['rescisao', 'pj'], createdBy: current.username, expiresAt };
       tempUsers.set(username, user);
       return sendJson(res, 200, { ok: true, user: publicUser(user), password });
+    }
+
+
+    if (req.method === 'POST' && pathname === '/api/calculo') {
+      const user = getCurrentUser(req);
+      if (!user) return sendJson(res, 401, { ok: false, error: 'Não autenticado.' });
+      const data = await readBody(req);
+      const resultado = calcularRescisao(data);
+      return sendJson(res, 200, {
+        ok: true,
+        ...resultado,
+        memoriaTexto: gerarMemoriaCalculo(resultado)
+      });
     }
 
     if (req.method === 'GET' && pathname === '/go/sistema-externo') {

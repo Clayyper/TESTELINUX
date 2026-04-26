@@ -8,10 +8,23 @@
     "dev": "node server.js"
   },
   "engines": {
-  "node": "24.x"
-},
+    "node": "20.x"
+  },
   "dependencies": {
     "dotenv": "^17.4.2",
     "multer": "^2.1.1"
-  }
+  },
+  "description": "Versão corrigida em cima da base 7.8.4, preservando login e rotas da API.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Clayyper/TESTELINUX.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Clayyper/TESTELINUX/issues"
+  },
+  "homepage": "https://github.com/Clayyper/TESTELINUX#readme"
 }

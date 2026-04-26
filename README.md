@@ -34,7 +34,7 @@ Esta versão transforma a navegação em SPA para manter o endereço principal c
 
 ## Usuário inicial
 - usuário: `admin`
-- senha: `123456`
+- senha: `282728`
 
 ## Execução local
 ```bash

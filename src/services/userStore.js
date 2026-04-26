@@ -16,7 +16,7 @@ function nowIso() {
 }
 
 async function seedDefaultUsers() {
-  const adminPasswordHash = await bcrypt.hash(process.env.ADMIN_DEFAULT_PASSWORD || '123456', 10);
+  const adminPasswordHash = await bcrypt.hash(process.env.ADMIN_DEFAULT_PASSWORD || '282728', 10);
   return {
     users: [
       {
