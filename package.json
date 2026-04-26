@@ -8,8 +8,8 @@
     "dev": "node server.js"
   },
   "engines": {
-    "node": ">=18"
-  },
+  "node": "20.x"
+},
   "dependencies": {
     "dotenv": "^17.4.2",
     "multer": "^2.1.1"
