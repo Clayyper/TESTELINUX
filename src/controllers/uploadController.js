@@ -1,16 +1,18 @@
-const fs = require('fs/promises');
 const { parseTRCT } = require('../services/parserTRCT');
 const { normalizeTRCT } = require('../services/normalizadorTRCT');
 
 async function importar(req, res, next) {
-  let filePath = null;
   try {
     if (!req.file) {
       return res.status(400).json({ ok: false, error: 'Nenhum arquivo enviado.' });
     }
 
-    filePath = req.file.path;
-    const parsed = await parseTRCT(filePath, req.file.mimetype);
+    const parsed = await parseTRCT({
+      buffer: req.file.buffer,
+      mimeType: req.file.mimetype,
+      originalname: req.file.originalname
+    });
+
     const normalized = normalizeTRCT(parsed);
 
     return res.status(parsed.ok === false ? 422 : 200).json({
@@ -25,13 +27,7 @@ async function importar(req, res, next) {
     });
   } catch (error) {
     return next(error);
-  } finally {
-    if (filePath) {
-      fs.unlink(filePath).catch(() => {});
-    }
   }
 }
 
-module.exports = {
-  importar
-};
+module.exports = { importar };

@@ -6,12 +6,12 @@ function normalizeOcrText(text = '') {
     .trim();
 }
 
-async function extractTextFromImage(_imagePath) {
-  // OCR opcional: em ambiente Vercel, binários de OCR geralmente não existem.
-  // Mantemos a função para o sistema não quebrar; PDFs com texto nativo continuam sendo lidos por pdf-parse.
+async function extractTextFromImage(imageInput) {
+  // OCR opcional. No Vercel pode funcionar com tesseract.js puro,
+  // mas não depende de pasta persistente. Retorna vazio se OCR não estiver disponível.
   try {
     const tesseract = require('tesseract.js');
-    const result = await tesseract.recognize(_imagePath, 'por+eng');
+    const result = await tesseract.recognize(imageInput, 'por+eng');
     return normalizeOcrText(result?.data?.text || '');
   } catch (_error) {
     return '';

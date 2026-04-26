@@ -1,0 +1,18 @@
+PATCH SOMENTE DA IMPORTACAO - VERCEL
+
+Substitua somente estes 4 arquivos no seu projeto atual:
+
+1) src/routes/upload.routes.js
+2) src/controllers/uploadController.js
+3) src/services/parserTRCT.js
+4) src/services/ocrService.js
+
+O que muda:
+- Upload passa a usar multer.memoryStorage().
+- O arquivo importado nao e armazenado no projeto.
+- PDF com texto e lido direto da memoria.
+- Arquivo temporario so e criado em /tmp quando precisar de OCR/reparo/conversao e e apagado ao final.
+- O endpoint continua o mesmo: POST /api/upload-trct
+- O campo do formulario continua o mesmo: arquivo
+
+Nao precisa substituir telas, login, layout, app.js, api/index.js ou rotas de calculo.

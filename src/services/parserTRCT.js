@@ -1,4 +1,6 @@
 const fs = require('fs');
+const fsp = require('fs/promises');
+const os = require('os');
 const path = require('path');
 const pdfParse = require('pdf-parse');
 const { tryRepairPdf } = require('./pdfRepair');
@@ -26,6 +28,29 @@ function logsToMessages(logs = []) {
 function hasUsefulText(text = '') {
   const normalized = normalizeOcrText(text);
   return normalized.length >= 20;
+}
+
+function safeExt(originalname = '', mimeType = '') {
+  const ext = path.extname(originalname || '').toLowerCase();
+  if (ext) return ext;
+  if (/pdf/i.test(mimeType)) return '.pdf';
+  if (/png/i.test(mimeType)) return '.png';
+  if (/jpe?g/i.test(mimeType)) return '.jpg';
+  if (/webp/i.test(mimeType)) return '.webp';
+  return '';
+}
+
+async function writeTempFile(buffer, originalname = 'upload', mimeType = '') {
+  const dir = await fsp.mkdtemp(path.join(os.tmpdir(), 'trct-import-'));
+  const ext = safeExt(originalname, mimeType) || '.bin';
+  const filePath = path.join(dir, `arquivo${ext}`);
+  await fsp.writeFile(filePath, buffer);
+  return { dir, filePath };
+}
+
+async function removeTempDir(dir) {
+  if (!dir) return;
+  await fsp.rm(dir, { recursive: true, force: true }).catch(() => {});
 }
 
 async function parsePdfBuffer(buffer) {
@@ -63,11 +88,9 @@ async function tryOcrFromPdf(filePath, extraObs = []) {
   };
 }
 
-async function parsePdf(filePath) {
-  const buffer = fs.readFileSync(filePath);
-
+async function parsePdfFromFile(filePath, buffer) {
   try {
-    const parsed = await parsePdfBuffer(buffer);
+    const parsed = await parsePdfBuffer(buffer || fs.readFileSync(filePath));
     if (hasUsefulText(parsed.textoBruto)) return parsed;
     return await tryOcrFromPdf(filePath, parsed.observacoes);
   } catch (error) {
@@ -154,29 +177,79 @@ async function parsePdf(filePath) {
   }
 }
 
-async function parseTRCT(filePath, mimeType) {
-  const ext = path.extname(filePath).toLowerCase();
+async function parsePdfUpload(buffer, originalname, mimeType) {
+  let temp = null;
+  try {
+    // Primeiro tenta ler o PDF direto da memória, sem gravar nada.
+    try {
+      const parsed = await parsePdfBuffer(buffer);
+      if (hasUsefulText(parsed.textoBruto)) return parsed;
+    } catch (_error) {
+      // Se falhar, cai no fluxo completo abaixo com arquivo temporário.
+    }
+
+    // Só cria arquivo temporário quando precisa de reparo/OCR/conversão.
+    temp = await writeTempFile(buffer, originalname, mimeType);
+    return await parsePdfFromFile(temp.filePath, buffer);
+  } finally {
+    await removeTempDir(temp?.dir);
+  }
+}
+
+async function parseImageUpload(buffer, originalname, mimeType) {
+  // Tesseract pode ler buffer em muitos ambientes. Se não conseguir, usa arquivo temporário.
+  let text = '';
+  try {
+    text = await extractTextFromImage(buffer);
+  } catch (_error) {
+    let temp = null;
+    try {
+      temp = await writeTempFile(buffer, originalname, mimeType);
+      text = await extractTextFromImage(temp.filePath);
+    } finally {
+      await removeTempDir(temp?.dir);
+    }
+  }
+
+  return {
+    ok: hasUsefulText(text),
+    tipoEntrada: 'imagem',
+    estrategia: 'ocr',
+    textoBruto: text,
+    observacoes: ['Texto extraído por OCR da imagem enviada.'],
+    erroLeitura: hasUsefulText(text)
+      ? null
+      : {
+          codigo: 'OCR_EMPTY',
+          mensagem: 'O OCR não conseguiu extrair texto suficiente da imagem.'
+        }
+  };
+}
+
+async function parseTRCT(input, maybeMimeType) {
+  // Compatibilidade com assinatura antiga: parseTRCT(filePath, mimeType)
+  if (typeof input === 'string') {
+    const filePath = input;
+    const mimeType = maybeMimeType || '';
+    const ext = path.extname(filePath).toLowerCase();
+    if (mimeType === 'application/pdf' || ext === '.pdf') return parsePdfFromFile(filePath);
+    if (['.png', '.jpg', '.jpeg', '.webp'].includes(ext)) {
+      return parseImageUpload(fs.readFileSync(filePath), path.basename(filePath), mimeType);
+    }
+    throw new Error('Formato de arquivo não suportado. Envie PDF, PNG, JPG, JPEG ou WEBP.');
+  }
+
+  const { buffer, mimeType = '', originalname = 'arquivo' } = input || {};
+  if (!buffer) throw new Error('Arquivo sem conteúdo para importar.');
+
+  const ext = safeExt(originalname, mimeType);
 
   if (mimeType === 'application/pdf' || ext === '.pdf') {
-    return parsePdf(filePath);
+    return parsePdfUpload(buffer, originalname, mimeType);
   }
 
   if (['.png', '.jpg', '.jpeg', '.webp'].includes(ext)) {
-    const text = await extractTextFromImage(filePath);
-
-    return {
-      ok: hasUsefulText(text),
-      tipoEntrada: 'imagem',
-      estrategia: 'ocr',
-      textoBruto: text,
-      observacoes: ['Texto extraído por OCR da imagem enviada.'],
-      erroLeitura: hasUsefulText(text)
-        ? null
-        : {
-            codigo: 'OCR_EMPTY',
-            mensagem: 'O OCR não conseguiu extrair texto suficiente da imagem.'
-          }
-    };
+    return parseImageUpload(buffer, originalname, mimeType);
   }
 
   throw new Error('Formato de arquivo não suportado. Envie PDF, PNG, JPG, JPEG ou WEBP.');
