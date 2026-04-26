@@ -1,7 +1,4 @@
-node_modules/
 .env
-.DS_Store
-npm-debug.log*
+node_modules/
 .vercel/
-src/uploads/
-temp/
+.DS_Store

@@ -1,5 +1,5 @@
 {
-  "name": "vercel-node-app",
+  "name": "testelinux-portal-rescisao",
   "version": "1.0.0",
   "private": true,
   "main": "server.js",
@@ -11,20 +11,9 @@
     "node": "20.x"
   },
   "dependencies": {
-    "dotenv": "^17.4.2",
-    "multer": "^2.1.1"
-  },
-  "description": "Versão corrigida em cima da base 7.8.4, preservando login e rotas da API.",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Clayyper/TESTELINUX.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/Clayyper/TESTELINUX/issues"
-  },
-  "homepage": "https://github.com/Clayyper/TESTELINUX#readme"
+    "dotenv": "^16.6.1",
+    "express": "^4.18.2",
+    "multer": "^2.1.1",
+    "pdf-parse": "^1.1.1"
+  }
 }
