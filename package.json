@@ -1,32 +1,17 @@
 {
-  "name": "rescisao-trct-auditoria",
-  "version": "8.0.0",
-  "description": "Portal responsivo com login preservado, rescisão CLT, auditoria TRCT e comparador externo interno ao portal.",
-  "main": "app.js",
+  "name": "vercel-node-app",
+  "version": "1.0.0",
+  "private": true,
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js",
-    "vercel-build": "echo Vercel build ready"
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
-    "express": "^4.21.2",   
-    "pdf-parse": "^1.1.1",
-    "pdf-poppler": "^0.2.1",
-    "tesseract.js": "^5.1.1",
-    "pdfkit": "^0.15.0",
-    "bcryptjs": "^2.4.3"
-  },
-  "devDependencies": {},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Clayyper/TESTELINUX.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/Clayyper/TESTELINUX/issues"
-  },
-  "homepage": "https://github.com/Clayyper/TESTELINUX#readme"
+    "dotenv": "^17.4.2",
+    "multer": "^2.1.1"
+  }
 }
